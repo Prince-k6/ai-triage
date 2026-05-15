@@ -35,6 +35,30 @@ export default function Dashboard() {
     fetchSessions();
   }, [navigate]);
 
+  const handleDeleteSession = async (e, id) => {
+    e.stopPropagation();
+    if (!window.confirm("Are you sure you want to delete this session?")) return;
+
+    const token = localStorage.getItem("token");
+    if (!token) return navigate("/login");
+
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+      const res = await fetch(`${apiUrl}/triage/sessions/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        setPastSessions(prev => prev.filter(s => s.id !== id));
+      } else {
+        alert("Failed to delete session.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Failed to delete session.");
+    }
+  };
+
   const levelColors = {
     home: "#22c55e",
     clinic: "#f59e0b",
@@ -76,15 +100,24 @@ export default function Dashboard() {
             >
               <div className="session-card-header">
                 <span className="session-date">{session.date}</span>
-                <span 
-                  className="session-badge"
-                  style={{ 
-                    background: levelColors[session.level] + "22",
-                    color: levelColors[session.level]
-                  }}
-                >
-                  {levelLabels[session.level]}
-                </span>
+                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                  <span 
+                    className="session-badge"
+                    style={{ 
+                      background: levelColors[session.level] + "22",
+                      color: levelColors[session.level]
+                    }}
+                  >
+                    {levelLabels[session.level]}
+                  </span>
+                  <button 
+                    onClick={(e) => handleDeleteSession(e, session.id)}
+                    className="delete-session-btn"
+                    title="Delete session"
+                  >
+                    🗑️
+                  </button>
+                </div>
               </div>
               <h3 className="session-reason">{session.reason}</h3>
               <div className="session-score">

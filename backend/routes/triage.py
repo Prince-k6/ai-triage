@@ -44,3 +44,13 @@ def get_session(session_id: int, db: Session = Depends(get_db), current_user: mo
     if not session:
         raise HTTPException(status_code=404, detail="Session not found")
     return session
+
+@router.delete("/sessions/{session_id}")
+def delete_session(session_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    session = db.query(models.TriageSession).filter(models.TriageSession.id == session_id, models.TriageSession.owner_id == current_user.id).first()
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+    
+    db.delete(session)
+    db.commit()
+    return {"message": "Session deleted successfully"}

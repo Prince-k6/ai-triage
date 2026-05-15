@@ -1,8 +1,18 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import MessageBubble from "./MessageBubble";
 import "./components.css";
 
 export default function ChatArea({ messages, loading, input, setInput, sendMessage, isReadOnly }) {
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, loading]);
+
   const handleKey = (e) => {
     if (e.key === "Enter") sendMessage();
   };
@@ -29,6 +39,7 @@ export default function ChatArea({ messages, loading, input, setInput, sendMessa
             Analyzing your symptoms...
           </div>
         )}
+        <div ref={messagesEndRef} />
       </div>
 
       {/* Input */}

@@ -118,7 +118,7 @@ export default function Triage() {
         riskLevel={riskLevel} 
         reason={reason} 
       />
-      <div style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column' }}>
+      <div style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', top: '16px', right: '24px', zIndex: 10 }}>
           <ProfileDropdown />
         </div>

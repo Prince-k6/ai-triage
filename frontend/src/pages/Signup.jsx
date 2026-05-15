@@ -11,14 +11,20 @@ export default function Signup() {
     e.preventDefault();
     try {
       const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
-      await fetch(`${apiUrl}/auth/signup`, {
+      const res = await fetch(`${apiUrl}/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password })
       });
+      
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.detail || "Error signing up");
+      }
+      
       navigate("/login");
     } catch (err) {
-      alert("Error signing up");
+      alert(err.message || "Error signing up");
     }
   };
 
