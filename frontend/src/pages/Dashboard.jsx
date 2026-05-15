@@ -68,7 +68,12 @@ export default function Dashboard() {
 
         <div className="sessions-grid">
           {pastSessions.map(session => (
-            <div key={session.id} className="session-card">
+            <div 
+              key={session.id} 
+              className="session-card" 
+              onClick={() => navigate(`/triage/${session.id}`)}
+              style={{ cursor: "pointer" }}
+            >
               <div className="session-card-header">
                 <span className="session-date">{session.date}</span>
                 <span 

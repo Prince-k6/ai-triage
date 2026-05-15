@@ -24,7 +24,8 @@ def save_session(session_data: schemas.TriageSessionCreate, db: Session = Depend
         owner_id=current_user.id,
         reason=session_data.reason,
         score=session_data.score,
-        level=session_data.level
+        level=session_data.level,
+        messages=session_data.messages
     )
     db.add(new_session)
     db.commit()
@@ -34,3 +35,12 @@ def save_session(session_data: schemas.TriageSessionCreate, db: Session = Depend
 @router.get("/sessions", response_model=List[schemas.TriageSessionResponse])
 def get_sessions(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     return db.query(models.TriageSession).filter(models.TriageSession.owner_id == current_user.id).order_by(models.TriageSession.date.desc()).all()
+
+from fastapi import HTTPException
+
+@router.get("/sessions/{session_id}", response_model=schemas.TriageSessionResponse)
+def get_session(session_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    session = db.query(models.TriageSession).filter(models.TriageSession.id == session_id, models.TriageSession.owner_id == current_user.id).first()
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+    return session

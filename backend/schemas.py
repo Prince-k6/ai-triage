@@ -23,6 +23,7 @@ class TriageSessionCreate(BaseModel):
     reason: str
     score: int
     level: str
+    messages: Optional[str] = None
 
 class TriageSessionResponse(BaseModel):
     id: int
@@ -30,6 +31,7 @@ class TriageSessionResponse(BaseModel):
     reason: str
     score: int
     level: str
+    messages: Optional[str] = None
 
     class Config:
         from_attributes = True

@@ -22,5 +22,6 @@ class TriageSession(Base):
     reason = Column(String)
     score = Column(Integer)
     level = Column(String)
+    messages = Column(String) # JSON string of full chat history
 
     owner = relationship("User", back_populates="sessions")

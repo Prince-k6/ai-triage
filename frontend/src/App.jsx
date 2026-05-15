@@ -14,6 +14,7 @@ export default function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/triage" element={<Triage />} />
+      <Route path="/triage/:id" element={<Triage />} />
     </Routes>
   );
 }
