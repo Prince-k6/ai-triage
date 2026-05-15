@@ -30,7 +30,8 @@ export default function App() {
     setLoading(true);
 
     try {
-      const res = await axios.post("/api/triage", {
+      const apiUrl = import.meta.env.VITE_API_URL || "/api";
+      const res = await axios.post(`${apiUrl}/triage`, {
         messages: newMessages,
       });
 
