@@ -1,6 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routes import triage
+from routes import triage, auth
+import models
+from database import engine
+
+# Create database tables
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
@@ -13,8 +18,9 @@ app.add_middleware(
     expose_headers=["*"],
 )
 
+app.include_router(auth.router)
 app.include_router(triage.router)
 
 @app.get("/")
 async def root():
-    return {"status": "AI Triage Backend Running"}
+    return {"status": "AI Triage Backend Running (with DB Auth)"}

@@ -1,31 +1,24 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
-export default function Login() {
+export default function Signup() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
     try {
       const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
-      const formData = new URLSearchParams();
-      formData.append("username", email);
-      formData.append("password", password);
-      
-      const res = await fetch(`${apiUrl}/auth/login`, {
+      await fetch(`${apiUrl}/auth/signup`, {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: formData
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password })
       });
-      
-      if (!res.ok) throw new Error("Login failed");
-      const data = await res.json();
-      localStorage.setItem("token", data.access_token);
-      navigate("/dashboard");
+      navigate("/login");
     } catch (err) {
-      alert("Invalid credentials");
+      alert("Error signing up");
     }
   };
 
@@ -34,11 +27,22 @@ export default function Login() {
       <div className="login-card">
         <div className="login-header">
           <div className="login-icon">🏥</div>
-          <h2>AI Triage</h2>
-          <p className="subtitle">Sign in to manage your health assessments</p>
+          <h2>Join AI Triage</h2>
+          <p className="subtitle">Create an account to get started.</p>
         </div>
 
-        <form onSubmit={handleLogin} className="login-form">
+        <form onSubmit={handleSignup} className="login-form">
+          <div className="form-group">
+            <label>Full Name</label>
+            <input 
+              type="text" 
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Your Name" 
+              required
+            />
+          </div>
+
           <div className="form-group">
             <label>Email Address</label>
             <input 
@@ -62,12 +66,12 @@ export default function Login() {
           </div>
 
           <button type="submit" className="btn-primary full-width">
-            Sign In
+            Create Account
           </button>
         </form>
         
         <div className="login-footer">
-          Don't have an account? <Link to="/signup">Sign up</Link>
+          Already have an account? <Link to="/login">Sign In</Link>
         </div>
       </div>
     </div>

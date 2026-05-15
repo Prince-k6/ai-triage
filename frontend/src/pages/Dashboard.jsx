@@ -1,15 +1,39 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import ProfileDropdown from "../components/ProfileDropdown";
 
 export default function Dashboard() {
   const navigate = useNavigate();
 
-  // Mock past sessions
-  const pastSessions = [
-    { id: 1, date: "Today", reason: "Mild Fever and Cough", score: 30, level: "home" },
-    { id: 2, date: "Oct 12, 2026", reason: "Severe back pain", score: 55, level: "clinic" },
-    { id: 3, date: "Sep 04, 2026", reason: "Chest tightness", score: 85, level: "emergency" },
-  ];
+  const [pastSessions, setPastSessions] = React.useState([]);
+
+  React.useEffect(() => {
+    const fetchSessions = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return navigate("/login");
+      
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+        const res = await fetch(`${apiUrl}/triage/sessions`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (res.status === 401) {
+          localStorage.removeItem("token");
+          return navigate("/login");
+        }
+        const data = await res.json();
+        // format dates
+        const formatted = data.map(s => ({
+          ...s,
+          date: new Date(s.date).toLocaleDateString()
+        }));
+        setPastSessions(formatted);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchSessions();
+  }, [navigate]);
 
   const levelColors = {
     home: "#22c55e",
@@ -28,7 +52,7 @@ export default function Dashboard() {
       {/* Top Navbar */}
       <nav className="navbar">
         <h2 className="logo">🏥 AI Triage</h2>
-        <button onClick={() => navigate("/login")} className="btn-outline">Sign Out</button>
+        <ProfileDropdown />
       </nav>
 
       <div className="dashboard-content">
